@@ -2,24 +2,22 @@ function CategoricalValue{T, R}(level::Integer, pool::CategoricalPool{T, R})
     return CategoricalValue(convert(R, level), pool)
 end
 
-Base.convert{T, R}(::Type{CategoricalValue{T, R}}, x::CategoricalValue{T, R}) = x
+Base.convert{T, R <: Integer}(::Type{CategoricalValue{T, R}}, x::CategoricalValue{T, R}) = x
 Base.convert{T}(::Type{CategoricalValue{T}}, x::CategoricalValue{T}) = x
 Base.convert(::Type{CategoricalValue}, x::CategoricalValue) = x
+
+Base.convert{T, R <: Integer}(::Type{Union{CategoricalValue{T, R}, Null}}, x::CategoricalValue{T, R}) = x
+Base.convert{T}(::Type{Union{CategoricalValue{T}, Null}}, x::CategoricalValue{T}) = x
+Base.convert(::Type{Union{CategoricalValue, Null}}, x::CategoricalValue) = x
 
 Base.promote_rule{S, T, R}(::Type{CategoricalValue{S, R}}, ::Type{T}) = promote_type(S, T)
 Base.promote_rule{S, T}(::Type{CategoricalValue{S}}, ::Type{T}) = promote_type(S, T)
 Base.promote_rule{T}(::Type{CategoricalValue}, ::Type{T}) = T
 
-# To fix ambiguities with definitions from Base
-Base.convert{S}(::Type{Nullable{S}}, x::CategoricalValue{Nullable}) =
-    convert(Nullable{S}, index(x.pool)[x.level])
-Base.convert{S}(::Type{Nullable}, x::CategoricalValue{S}) = convert(Nullable{S}, x)
-Base.convert{T}(::Type{Nullable{CategoricalValue{Nullable{T}}}},
-                x::CategoricalValue{Nullable{T}}) =
-    Nullable(x)
-Base.convert{T}(::Type{Ref}, x::CategoricalValue{T}) = RefValue{T}(x)
-
-Base.convert{S, T, R}(::Type{S}, x::CategoricalValue{T, R}) = convert(S, index(x.pool)[x.level])
+Base.convert{S}(::Type{S}, x::CategoricalValue) = convert(S, index(x.pool)[x.level])
+Base.convert{S}(::Type{Union{S, Null}}, x::CategoricalValue) = convert(S, index(x.pool)[x.level])
+# To fix ambiguity
+Base.convert(::Type{Any}, x::CategoricalValue) = x
 
 function Base.show{T}(io::IO, x::CategoricalValue{T})
     if @compat(get(io, :compact, false))
