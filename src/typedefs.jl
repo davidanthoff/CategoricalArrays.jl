@@ -1,4 +1,4 @@
-@compat const DefaultRefType = UInt32
+const DefaultRefType = UInt32
 
 ## Pools
 

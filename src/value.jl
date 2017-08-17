@@ -23,7 +23,7 @@ Base.convert(::Type{Any}, x::CategoricalArrays.CategoricalValue) = x
 Base.convert{S}(::Type{S}, x::CategoricalValue) = convert(S, index(x.pool)[x.level])
 
 function Base.show{T}(io::IO, x::CategoricalValue{T})
-    if @compat(get(io, :compact, false))
+    if get(io, :compact, false)
         print(io, repr(index(x.pool)[x.level]))
     elseif isordered(x.pool)
         @printf(io, "%s %s (%i/%i)",
@@ -46,11 +46,11 @@ end
 end
 
 # To fix ambiguities with Base
-@compat Base.:(==)(x::CategoricalValue, y::WeakRef) = index(x.pool)[x.level] == y
-@compat Base.:(==)(x::WeakRef, y::CategoricalValue) = y == x
+Base.:(==)(x::CategoricalValue, y::WeakRef) = index(x.pool)[x.level] == y
+Base.:(==)(x::WeakRef, y::CategoricalValue) = y == x
 
-@compat Base.:(==)(x::CategoricalValue, y::Any) = index(x.pool)[x.level] == y
-@compat Base.:(==)(x::Any, y::CategoricalValue) = y == x
+Base.:(==)(x::CategoricalValue, y::Any) = index(x.pool)[x.level] == y
+Base.:(==)(x::Any, y::CategoricalValue) = y == x
 
 @inline function Base.isequal(x::CategoricalValue, y::CategoricalValue)
     if x.pool === y.pool

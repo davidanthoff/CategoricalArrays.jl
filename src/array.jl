@@ -123,40 +123,40 @@ for (A, V, M) in ((:CategoricalArray, :CategoricalVector, :CategoricalMatrix),
 
         $A(dims::Int...; ordered=false) = $A{String}(dims, ordered=ordered)
 
-        @compat (::Type{$A{T, N, R}}){T, N, R}(dims::NTuple{N,Int}; ordered=false) =
+        (::Type{$A{T, N, R}}){T, N, R}(dims::NTuple{N,Int}; ordered=false) =
             $A{T, N, R}(zeros(R, dims), CategoricalPool{T, R}(ordered))
-        @compat (::Type{$A{T, N}}){T, N}(dims::NTuple{N,Int}; ordered=false) =
+        (::Type{$A{T, N}}){T, N}(dims::NTuple{N,Int}; ordered=false) =
             $A{T, N, DefaultRefType}(dims, ordered=ordered)
-        @compat (::Type{$A{T}}){T, N}(dims::NTuple{N,Int}; ordered=false) =
+        (::Type{$A{T}}){T, N}(dims::NTuple{N,Int}; ordered=false) =
             $A{T, N}(dims, ordered=ordered)
-        @compat (::Type{$A{T, 1}}){T}(m::Int; ordered=false) =
+        (::Type{$A{T, 1}}){T}(m::Int; ordered=false) =
             $A{T, 1}((m,), ordered=ordered)
-        @compat (::Type{$A{T, 2}}){T}(m::Int, n::Int; ordered=false) =
+        (::Type{$A{T, 2}}){T}(m::Int, n::Int; ordered=false) =
             $A{T, 2}((m, n), ordered=ordered)
-        @compat (::Type{$A{T, 1, R}}){T, R}(m::Int; ordered=false) =
+        (::Type{$A{T, 1, R}}){T, R}(m::Int; ordered=false) =
             $A{T, 1, R}((m,), ordered=ordered)
         # R <: Integer is required to prevent default constructor from being called instead
         @compat (::Type{$A{T, 2, R}}){T, R <: Integer}(m::Int, n::Int; ordered=false) =
             $A{T, 2, R}((m, n), ordered=ordered)
-        @compat (::Type{$A{T, 3, R}}){T, R}(m::Int, n::Int, o::Int; ordered=false) =
+        (::Type{$A{T, 3, R}}){T, R}(m::Int, n::Int, o::Int; ordered=false) =
             $A{T, 3, R}((m, n, o), ordered=ordered)
-        @compat (::Type{$A{T}}){T}(m::Int; ordered=false) =
+        (::Type{$A{T}}){T}(m::Int; ordered=false) =
             $A{T}((m,), ordered=ordered)
-        @compat (::Type{$A{T}}){T}(m::Int, n::Int; ordered=false) =
+        (::Type{$A{T}}){T}(m::Int, n::Int; ordered=false) =
             $A{T}((m, n), ordered=ordered)
-        @compat (::Type{$A{T}}){T}(m::Int, n::Int, o::Int; ordered=false) =
+        (::Type{$A{T}}){T}(m::Int, n::Int, o::Int; ordered=false) =
             $A{T}((m, n, o), ordered=ordered)
 
-        @compat (::Type{$A{CategoricalValue{T, R}, N, R}}){T, N, R}(dims::NTuple{N,Int};
+        (::Type{$A{CategoricalValue{T, R}, N, R}}){T, N, R}(dims::NTuple{N,Int};
                                                                     ordered=false) =
             $A{T, N, R}(dims, ordered=ordered)
-        @compat (::Type{$A{CategoricalValue{T}, N, R}}){T, N, R}(dims::NTuple{N,Int};
+        (::Type{$A{CategoricalValue{T}, N, R}}){T, N, R}(dims::NTuple{N,Int};
                                                                  ordered=false) =
             $A{T, N, R}(dims, ordered=ordered)
-        @compat (::Type{$A{CategoricalValue{T, R}, N}}){T, N, R}(dims::NTuple{N,Int};
+        (::Type{$A{CategoricalValue{T, R}, N}}){T, N, R}(dims::NTuple{N,Int};
                                                                  ordered=false) =
             $A{T, N, R}(dims, ordered=ordered)
-        @compat (::Type{$A{CategoricalValue{T}, N}}){T, N}(dims::NTuple{N,Int};
+        (::Type{$A{CategoricalValue{T}, N}}){T, N}(dims::NTuple{N,Int};
                                                            ordered=false) =
             $A{T, N}(dims, ordered=ordered)
 #        @compat (::Type{$A{CategoricalValue, N}}){N}(dims::NTuple{N,Int};
@@ -167,17 +167,17 @@ for (A, V, M) in ((:CategoricalArray, :CategoricalVector, :CategoricalMatrix),
 #            $A{String, N}(dims, ordered=ordered)
 
         $V(m::Integer; ordered=false) = $A(m, ordered=ordered)
-        @compat (::Type{$V{T}}){T}(m::Int; ordered=false) = $A{T}((m,), ordered=ordered)
+        (::Type{$V{T}}){T}(m::Int; ordered=false) = $A{T}((m,), ordered=ordered)
 
         $M(m::Int, n::Int; ordered=false) = $A(m, n, ordered=ordered)
-        @compat (::Type{$M{T}}){T}(m::Int, n::Int; ordered=false) = $A{T}((m, n), ordered=ordered)
+        (::Type{$M{T}}){T}(m::Int, n::Int; ordered=false) = $A{T}((m, n), ordered=ordered)
 
 
         ## Constructors from arrays
 
         # This method is needed to ensure that a copy of the pool is always made
         # so that ordered!() does not affect the original array
-        @compat function (::Type{$A{T, N, R}}){S, T, N, Q, R}(A::CatArray{S, N, Q}; ordered=_isordered(A))
+        function (::Type{$A{T, N, R}}){S, T, N, Q, R}(A::CatArray{S, N, Q}; ordered=_isordered(A))
             res = convert($A{T, N, R}, A)
             if res.pool === A.pool # convert() only makes a copy when necessary
                 res = $A{T, N, R}(res.refs, deepcopy(res.pool))
@@ -185,7 +185,7 @@ for (A, V, M) in ((:CategoricalArray, :CategoricalVector, :CategoricalMatrix),
             ordered!(res, ordered)
         end
 
-        @compat (::Type{$A{T, N, R}}){T, N, R}(A::AbstractArray; ordered=_isordered(A)) =
+        (::Type{$A{T, N, R}}){T, N, R}(A::AbstractArray; ordered=_isordered(A)) =
             ordered!(convert($A{T, N, R}, A), ordered)
 
         @compat (::Type{$A{T, N, R}}){T<:CategoricalValue, N, R}(A::AbstractArray;
@@ -193,39 +193,39 @@ for (A, V, M) in ((:CategoricalArray, :CategoricalVector, :CategoricalMatrix),
             $A{T.parameters[1], N, R}(A, ordered=ordered)
 
         # From AbstractArray
-        @compat (::Type{$A{T, N}}){S, T, N}(A::AbstractArray{S, N}; ordered=_isordered(A)) =
+        (::Type{$A{T, N}}){S, T, N}(A::AbstractArray{S, N}; ordered=_isordered(A)) =
             $A{T, N, DefaultRefType}(A, ordered=ordered)
-        @compat (::Type{$A{T}}){S, T, N}(A::AbstractArray{S, N}; ordered=_isordered(A)) =
+        (::Type{$A{T}}){S, T, N}(A::AbstractArray{S, N}; ordered=_isordered(A)) =
             $A{T, N}(A, ordered=ordered)
-        @compat (::Type{$A}){T, N}(A::AbstractArray{T, N}; ordered=_isordered(A)) =
+        (::Type{$A}){T, N}(A::AbstractArray{T, N}; ordered=_isordered(A)) =
             $A{T, N}(A, ordered=ordered)
 
-        @compat (::Type{$V{T}}){S, T}(A::AbstractVector{S}; ordered=_isordered(A)) =
+        (::Type{$V{T}}){S, T}(A::AbstractVector{S}; ordered=_isordered(A)) =
             $A{T, 1}(A, ordered=ordered)
-        @compat (::Type{$V}){T}(A::AbstractVector{T}; ordered=_isordered(A)) =
+        (::Type{$V}){T}(A::AbstractVector{T}; ordered=_isordered(A)) =
             $A{T, 1}(A, ordered=ordered)
 
-        @compat (::Type{$M{T}}){S, T}(A::AbstractMatrix{S}; ordered=_isordered(A)) =
+        (::Type{$M{T}}){S, T}(A::AbstractMatrix{S}; ordered=_isordered(A)) =
             $A{T, 2}(A, ordered=ordered)
-        @compat (::Type{$M}){T}(A::AbstractMatrix{T}; ordered=_isordered(A)) =
+        (::Type{$M}){T}(A::AbstractMatrix{T}; ordered=_isordered(A)) =
             $A{T, 2}(A, ordered=ordered)
 
         # From CategoricalArray (preserve R)
-        @compat (::Type{$A{T, N}}){S, T, N, R}(A::CatArray{S, N, R}; ordered=_isordered(A)) =
+        (::Type{$A{T, N}}){S, T, N, R}(A::CatArray{S, N, R}; ordered=_isordered(A)) =
             $A{T, N, R}(A, ordered=ordered)
-        @compat (::Type{$A{T}}){S, T, N, R}(A::CatArray{S, N, R}; ordered=_isordered(A)) =
+        (::Type{$A{T}}){S, T, N, R}(A::CatArray{S, N, R}; ordered=_isordered(A)) =
             $A{T, N, R}(A, ordered=ordered)
-        @compat (::Type{$A}){T, N, R}(A::CatArray{T, N, R}; ordered=_isordered(A)) =
+        (::Type{$A}){T, N, R}(A::CatArray{T, N, R}; ordered=_isordered(A)) =
             $A{T, N, R}(A, ordered=ordered)
 
-        @compat (::Type{$V{T}}){S, T, R}(A::CatArray{S, 1, R}; ordered=_isordered(A)) =
+        (::Type{$V{T}}){S, T, R}(A::CatArray{S, 1, R}; ordered=_isordered(A)) =
             $A{T, 1, R}(A, ordered=ordered)
-        @compat (::Type{$V}){T, R}(A::CatArray{T, 1, R}; ordered=_isordered(A)) =
+        (::Type{$V}){T, R}(A::CatArray{T, 1, R}; ordered=_isordered(A)) =
             $A{T, 1, R}(A, ordered=ordered)
 
-        @compat (::Type{$M{T}}){S, T, R}(A::CatArray{S, 2, R}; ordered=_isordered(A)) =
+        (::Type{$M{T}}){S, T, R}(A::CatArray{S, 2, R}; ordered=_isordered(A)) =
             $A{T, 2, R}(A, ordered=ordered)
-        @compat (::Type{$M}){T, R}(A::CatArray{T, 2, R}; ordered=_isordered(A)) =
+        (::Type{$M}){T, R}(A::CatArray{T, 2, R}; ordered=_isordered(A)) =
             $A{T, 2, R}(A, ordered=ordered)
 
 
@@ -293,7 +293,7 @@ for (A, V, M) in ((:CategoricalArray, :CategoricalVector, :CategoricalMatrix),
     end
 end
 
-function @compat(Base.:(==))(A::CatArray, B::CatArray)
+function Base.:(==)(A::CatArray, B::CatArray)
     if size(A) != size(B)
         return false
     end
